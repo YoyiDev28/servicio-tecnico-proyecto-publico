@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Seguimiento de Equipo{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center my-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg">
+            <div class="card-body p-4">
+                <h2 class="card-title text-center text-primary fw-bold mb-4">Estado de tu Equipo</h2>
+                <p class="text-center text-muted">Ingresa el código de seguimiento y tu DNI/CUIT para ver el estado de tu equipo.</p>
+                <form action="{{ url_for('track_device') }}" method="post">
+                    <div class="input-group input-group-lg mb-3">
+                        <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
+                        <input type="text" class="form-control" name="tracking_code" placeholder="Ingresa el código de seguimiento" required>
+                    </div>
+                    <div class="input-group input-group-lg mb-3">
+                        <span class="input-group-text"><i class="bi bi-person-vcard"></i></span>
+                        <input type="text" class="form-control" name="customer_id_number" placeholder="Ingresa tu DNI / CUIT" required>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="terms_acceptance" name="terms_acceptance" required>
+                        <label class="form-check-label" for="terms_acceptance">
+                            Acepto los <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Términos y Condiciones de Garantía</a>
+                        </label>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg"><i class="bi bi-search me-2"></i>Buscar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="termsModalLabel">Términos y Condiciones de Garantía</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6>1. Alcance de la garantía</h6>
+                        <ul>
+                            <li>La garantía cubre exclusivamente el servicio realizado y las piezas/repuestos provistos por el Servicio Técnico.</li>
+                            <li>La Garantía NO cubre fallas o daños ocasionados por mal uso, golpes, humedad, sobrecargas eléctricas, manipulaciones de terceros o cualquier causa externa al servicio realizado o mal uso o uso inadecuado del equipo.</li>
+                        </ul>
+                        <h6>2. Plazos de garantía</h6>
+                        <ul>
+                            <li>Servicios de reparación electrónica: tendrán un plazo de 30 días corridos desde la fecha de entrega del equipo.</li>
+                            <li>Los cambios o reemplazo de pantalla tendrán una garantía de 72hs.</li>
+                            <li>Reemplazo de piezas o repuestos nuevos provistos por el Servicio Técnico: Tendrán un plazo de garantía de 30 días corridos.</li>
+                            <li>Repuestos usados o reacondicionados: 30 días corridos.</li>
+                            <li>Repuestos no provistos por el Servicio técnico: No tendrán Garantia.</li>
+                        </ul>
+                        <h6>3. Condiciones para validar la garantía</h6>
+                        <ul>
+                            <li>El cliente debe presentar el comprobante de reparación o ticket de servicio emitido por el Servicio Técnico.</li>
+                            <li>El equipo debe mantener intactos los sellos de seguridad y etiquetas.</li>
+                            <li>La garantía solo aplica al mismo fallo reparado o a la pieza reemplazada, no a otros componentes.</li>
+                            <li>En todos los casos la garantía estará sujeta a previo diagnóstico del equipo técnico.</li>
+                            <li>El servicio técnico no se hará responsable de fallas no declaradas por el usuario al momento de ingresar el equipo para su diagnóstico, como tampoco de las fallas que no puedan ser comprobadas si el equipo ingresa en estado apagado o sin funcionar.</li>
+                        </ul>
+                        <h6>4. Exclusiones</h6>
+                        <p>La garantía quedará sin efecto si:</p>
+                        <ul>
+                            <li>El equipo fue abierto, intervenido o manipulado por terceros.</li>
+                            <li>Presenta daños por líquidos, humedad, fuego, caídas, golpes o agentes externos.</li>
+                            <li>El daño proviene de problemas en la red eléctrica, subidas de tensión, instalaciones defectuosas o accesorios no originales.</li>
+                            <li>El cliente no entrega el comprobante correspondiente.</li>
+                        </ul>
+                        <h6>5. Procedimiento de reclamo</h6>
+                        <ul>
+                            <li>El cliente deberá ingresar nuevamente el equipo dentro del plazo de garantía. El equipo técnico evaluará el caso y, de corresponder, realizará la reparación sin cargo.</li>
+                            <li>Si la falla no está cubierta por la garantía, se informará al cliente el presupuesto correspondiente antes de avanzar.</li>
+                        </ul>
+                        <h6>6. Limitaciones de Responsabilidad</h6>
+                        <ul>
+                            <li>El servicio técnico no se hace responsable por pérdida de datos, configuraciones o software del equipo.</li>
+                            <li>La garantía no cubre accesorios ni periféricos (baterías, cargadores, cables, fundas, controles, etc.), salvo que sean parte del repuesto provisto por el Servicio Técnico.</li>
+                        </ul>
+                        <h6>7. Acuerdo y Abandono de equipo</h6>
+                        <ul>
+                            <li>Los plazos para retiro de los equipos será de hasta 7 días corridos desde que se le comunique su reparación o finalización de diagnóstico.</li>
+                            <li>Vencido el plazo de retiro el servicio técnico realizara una reconsideración del costo del trabajo realizado aguardando el retiro hasta el periodo de 15 días corridos desde que se informó la reparación.</li>
+                            <li>Vencido los plazos antes mencionados el servicio técnico estará facultado para declarar el equipo como abandonado y dar al mismo el destino que considere pertinente y el cliente no podrá generar reclamo alguno.</li>
+                            <li>El cliente acepta los términos y condiciones al ingresar el equipo para su diagnóstico y reparación.</li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if device %}
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-success text-white">
+                <h4 class="card-title mb-0 fw-bold"><i class="bi bi-check-circle-fill me-2"></i>Estado del Dispositivo</h4>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-5">Código de Seguimiento:</dt>
+                    <dd class="col-sm-7 fw-bold text-primary">{{ device.tracking_code }}</dd>
+                    <dt class="col-sm-5">Estado Actual:</dt>
+                    <dd class="col-sm-7">
+                        <span class="badge bg-{{ {'Ingresado':'secondary', 'Observacion':'warning', 'Reparacion':'info', 'Terminado':'success', 'Retirado':'dark'}[device.current_status] }}">{{ device.current_status }}</span>
+                    </dd>
+                    <dt class="col-sm-5">Última Actualización:</dt>
+                    <dd class="col-sm-7">{{ device.reception_date.strftime('%d/%m/%Y %H:%M') }}</dd>
+                    <dt class="col-sm-5">Descripción del Problema:</dt>
+                    <dd class="col-sm-7">{{ device.problem_description }}</dd>
+                </dl>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

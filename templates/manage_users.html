@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Usuarios{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title text-primary mb-4">Crear Nuevo Usuario</h4>
+                <form action="{{ url_for('manage_users') }}" method="post">
+                    <input type="hidden" name="action" value="add">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Nombre de Usuario</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Rol</label>
+                        <select class="form-select" id="role" name="role" required>
+                            <option value="" disabled selected>Selecciona un rol</option>
+                            {% for role in roles %}
+                            <option value="{{ role }}">{{ role | title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="branch" class="form-label">Sucursal</label>
+                        <select class="form-select" id="branch" name="branch">
+                            <option value="">(Sin asignar)</option>
+                            {% for branch in branches %}
+                            <option value="{{ branch }}">{{ branch }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success d-block w-100">Crear Usuario</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title text-primary mb-4">Lista de Usuarios</h4>
+                <div class="table-responsive">
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+                <th>Cambiar Contraseña</th> </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                    {% if user.role != 'admin' %}
+                    <form action="{{ url_for('manage_users') }}" method="post" style="display:inline;">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que quieres eliminar a este usuario?');">Eliminar</button>
+                    </form>
+                    {% endif %}
+                </td>
+                <td>
+                    <form action="{{ url_for('change_password', user_id=user.id) }}" method="post" style="display:inline;">
+                        <input type="password" name="new_password" placeholder="Nueva Contraseña" required class="form-control form-control-sm" style="width: 150px; display: inline-block;">
+                        <button type="submit" class="btn btn-sm btn-warning">Cambiar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

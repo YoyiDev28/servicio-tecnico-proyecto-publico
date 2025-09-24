@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Reporte de Ingresos y Ganancias{% endblock %}
+
+{% block content %}
+<main class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="text-primary fw-bold display-6">Reporte de Ingresos y Ganancias</h2>
+        <p class="lead text-muted">Este reporte muestra los cobros (ingresos brutos) y la ganancia neta de los dispositivos entregados.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-cash-stack me-2"></i>Cobros Mensuales</h4>
+                </div>
+                <div class="card-body">
+                    {% if monthly_revenue %}
+                        <ul class="list-group list-group-flush">
+                        {% for month, total in monthly_revenue.items()|sort %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>{{ month }}</strong>
+                                <span class="badge bg-success rounded-pill">${{ "%.2f"|format(total) }}</span>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center text-muted">No hay cobros registrados por mes.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-piggy-bank me-2"></i>Ganancias Mensuales</h4>
+                </div>
+                <div class="card-body">
+                    {% if monthly_profit %}
+                        <ul class="list-group list-group-flush">
+                        {% for month, total in monthly_profit.items()|sort %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>{{ month }}</strong>
+                                <span class="badge bg-primary rounded-pill">${{ "%.2f"|format(total) }}</span>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center text-muted">No hay ganancias registradas por mes.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-calendar-week me-2"></i>Cobros Semanales</h4>
+                </div>
+                <div class="card-body">
+                    {% if weekly_revenue %}
+                        <ul class="list-group list-group-flush">
+                        {% for week, total in weekly_revenue.items()|sort %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>Semana {{ week.split('-')[1] }} de {{ week.split('-')[0] }}</strong>
+                                <span class="badge bg-success rounded-pill">${{ "%.2f"|format(total) }}</span>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center text-muted">No hay cobros registrados por semana.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-piggy-bank me-2"></i>Ganancias Semanales</h4>
+                </div>
+                <div class="card-body">
+                    {% if weekly_profit %}
+                        <ul class="list-group list-group-flush">
+                        {% for week, total in weekly_profit.items()|sort %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>Semana {{ week.split('-')[1] }} de {{ week.split('-')[0] }}</strong>
+                                <span class="badge bg-primary rounded-pill">${{ "%.2f"|format(total) }}</span>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center text-muted">No hay ganancias registradas por semana.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-calendar-day me-2"></i>Cobros Diarios</h4>
+                </div>
+                <div class="card-body">
+                    {% if daily_revenue %}
+                        <ul class="list-group list-group-flush">
+                        {% for day, total in daily_revenue.items()|sort %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>{{ day }}</strong>
+                                <span class="badge bg-success rounded-pill">${{ "%.2f"|format(total) }}</span>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center text-muted">No hay cobros registrados por día.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-piggy-bank me-2"></i>Ganancias Diarias</h4>
+                </div>
+                <div class="card-body">
+                    {% if daily_profit %}
+                        <ul class="list-group list-group-flush">
+                            {% for day, total in daily_profit.items()|sort %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>{{ day }}</strong>
+                                    <span class="badge bg-primary rounded-pill">${{ "%.2f"|format(total) }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center text-muted">No hay ganancias registradas por día.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h3 class="card-title mb-0 fw-bold"><i class="bi bi-list-check me-2"></i>Historial de Transacciones de Ingresos</h3>
+            </div>
+            <div class="card-body">
+                {% if delivered_devices %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Código de Seguimiento</th>
+                                <th>Fecha de Retiro</th>
+                                <th>Método de Pago</th>
+                                <th>Precio Final</th>
+                                <th>Costos Totales</th>
+                                <th>Ganancia Neta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for device in delivered_devices %}
+                            <tr>
+                                <td><a href="{{ url_for('view_device_details', device_id=device.id) }}">{{ device.tracking_code }}</a></td>
+                                <td>{{ device.delivery_date.strftime('%d/%m/%Y %H:%M') if device.delivery_date else 'N/A' }}</td>
+                                <td><span class="badge bg-secondary">{{ device.payment_method or 'N/A' }}</span></td>
+                                <td>${{ "%.2f"|format(device.final_price) }}</td>
+                                <td>${{ "%.2f"|format(device.total_cost) }}</td>
+                                <td>${{ "%.2f"|format(device.final_price - device.total_cost) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center text-muted">No hay dispositivos entregados para mostrar en el historial.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-5">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-lg"><i class="bi bi-arrow-left-circle-fill me-2"></i>Volver al Panel de Administración</a>
+    </div>
+</main>
+{% endblock %}

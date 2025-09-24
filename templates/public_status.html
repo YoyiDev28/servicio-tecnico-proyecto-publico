@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Estado del Dispositivo{% endblock %}
+
+{% block content %}
+<main class="container py-5">
+    <div id="main-content" style="display: none;">
+        <h2 class="text-center text-primary fw-bold mb-4">Estado de tu Equipo</h2>
+
+        {% if warning_message %}
+            <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+                <p class="mb-0 fw-bold">{{ warning_message }}</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0 fw-bold"><i class="bi bi-info-circle me-2"></i>Información del Dispositivo</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-1"><strong>Código de Seguimiento:</strong> <span class="fw-bold text-primary">{{ device.tracking_code }}</span></p>
+                        <p class="mb-1"><strong>Marca y Modelo:</strong> {{ device.brand }} {{ device.model }}</p>
+                        <p class="mb-1"><strong>Estado Actual:</strong> <span class="badge bg-{{ {'Ingresado':'secondary', 'Observacion':'warning', 'Reparacion':'info', 'Terminado':'success', 'Retirado':'dark'}[device.current_status] }}">{{ device.current_status }}</span></p>
+                        <p class="mb-1"><strong>Fecha de Recepción:</strong> {{ device.reception_date.strftime('%d/%m/%Y %H:%M') }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-secondary text-white">
+                        <h4 class="mb-0 fw-bold"><i class="bi bi-calendar-check me-2"></i>Última Actualización</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if device.repairs %}
+                            {% set latest_repair = device.repairs|sort(attribute='start_date', reverse=True)|first %}
+                            <p class="mb-1"><strong>Fecha:</strong> {{ latest_repair.start_date.strftime('%d/%m/%Y %H:%M') }}</p>
+                            <p class="mb-1"><strong>Descripción:</strong> {{ latest_repair.description }}</p>
+                            <p class="mb-1"><strong>Estado:</strong> {{ latest_repair.status }}</p>
+                        {% else %}
+                            <p class="text-muted text-center">El dispositivo ha sido recibido y está a la espera de un diagnóstico inicial.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{{ url_for('track_device') }}" class="btn btn-secondary btn-lg">Volver a la página de rastreo</a>
+        </div>
+    </div>
+
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="termsModalLabel"><i class="bi bi-file-earmark-text me-2"></i>Términos y Condiciones de Servicio</h5>
+                </div>
+                <div class="modal-body">
+                    <h6 class="fw-bold">1. Aceptación de Dispositivo</h6>
+                    <p>La recepción de su equipo es para un diagnóstico técnico. Nos comprometemos a informarle sobre el problema y el costo de la reparación antes de proceder.</p>
+
+                    <h6 class="fw-bold">2. Tiempos de Reparación</h6>
+                    <p>El tiempo estimado de diagnóstico es de 24 a 48 horas hábiles. Los tiempos de reparación pueden variar según la disponibilidad de componentes y la complejidad del problema. Nos comunicaremos con usted ante cualquier retraso significativo.</p>
+
+                    <h6 class="fw-bold">3. Garantía del Servicio</h6>
+                    <p>Las reparaciones tienen una garantía de <strong>{{ warranty_days_text }}</strong> días a partir de la fecha de finalización del servicio. Esta garantía cubre exclusivamente los componentes y el trabajo realizado. Si el dispositivo no es retirado dentro de este período, la garantía queda sin efecto.</p>
+
+                    <h6 class="fw-bold">4. Privacidad y Datos</h6>
+                    <p>No somos responsables por la pérdida o corrupción de datos. Se recomienda encarecidamente que realice una copia de seguridad de su información antes de entregar el dispositivo. No accederemos a su información personal, a menos que sea estrictamente necesario para la reparación y con su consentimiento previo.</p>
+
+                    <h6 class="fw-bold">5. Retiro del Dispositivo</h6>
+                    <p>Una vez finalizada la reparación, se le notificará para que retire su equipo. Deberá presentar este ticket de recepción y una identificación válida para el retiro. Los equipos no retirados después de 30 días serán considerados abandonados y podrán ser dispuestos por la empresa sin previo aviso.</p>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Acepto los Términos y Condiciones</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const termsModal = new bootstrap.Modal(document.getElementById('termsModal'));
+        const mainContent = document.getElementById('main-content');
+        
+        // Muestra el modal si no ha sido aceptado
+        if (!sessionStorage.getItem('termsAccepted')) {
+            termsModal.show();
+        } else {
+            mainContent.style.display = 'block';
+        }
+        
+        document.getElementById('termsModal').addEventListener('hidden.bs.modal', function () {
+            sessionStorage.setItem('termsAccepted', 'true');
+            mainContent.style.display = 'block';
+        });
+    });
+</script>
+{% endblock %}

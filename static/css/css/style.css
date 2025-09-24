@@ -1,0 +1,107 @@
+:root {
+  --bs-primary: #8679f2;
+  --bs-secondary: #6e7a83;
+  --bs-success: #3c9f7a;
+  --bs-info: #5f9ea0;
+  --bs-warning: #f7a63d;
+  --bs-danger: #c72c41;
+  --bs-dark: #2c2f33;
+  --bs-light: #f4f5f9;
+  --bs-font-sans-serif: 'Poppins', sans-serif;
+}
+
+body {
+  font-family: var(--bs-font-sans-serif);
+  background-color: var(--bs-light);
+  color: var(--bs-dark);
+}
+
+.text-primary {
+  color: var(--bs-primary) !important;
+}
+
+.text-secondary {
+  color: var(--bs-secondary) !important;
+}
+
+.fw-bold {
+  font-weight: 700 !important;
+}
+
+.navbar {
+  border-bottom: 3px solid var(--bs-primary);
+  background-color: var(--bs-dark) !important;
+  border-color: var(--bs-primary);
+}
+.navbar-brand, .navbar-nav .nav-link {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--bs-light) !important;
+}
+
+.btn-primary {
+  background-color: var(--bs-primary);
+  border: none;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+  border-radius: 50px;
+}
+.btn-primary:hover {
+  background-color: #5c4eb5;
+  transform: scale(1.05);
+}
+
+.card {
+  border: none;
+  border-radius: 15px;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.card-img-top {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.form-control:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.25rem rgba(134, 121, 242, 0.25);
+}
+
+.badge {
+  padding: 0.5em 0.8em;
+  font-size: 0.8em;
+}
+
+.jumbotron {
+  background-color: var(--bs-light);
+}
+.jumbotron h1 {
+  font-size: 3.5rem;
+}
+
+#seguimiento .card {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#locales .card i,
+#contacto i {
+  color: var(--bs-primary);
+}
+#contacto {
+  background-color: var(--bs-dark) !important;
+  color: var(--bs-light) !important;
+}
+
+.table-responsive {
+  border-radius: 10px;
+  overflow: hidden;
+}
+.table thead th {
+  background-color: var(--bs-dark);
+  color: #fff;
+}

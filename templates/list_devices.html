@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Equipos{% endblock %}
+
+{% block content %}
+<main class="container py-5">
+    <h2 class="text-center text-primary fw-bold mb-4">Equipos Registrados</h2>
+    <p class="text-center text-muted lead">A continuación se muestra la lista completa de todos los dispositivos en el sistema.</p>
+    
+    <div class="row justify-content-center my-4">
+        <div class="col-md-8">
+            <form class="d-flex" action="{{ url_for('list_devices') }}" method="GET">
+                <input class="form-control me-2" type="search" placeholder="Buscar por cliente, marca, modelo o código de seguimiento" aria-label="Search" name="query" value="{{ request.args.get('query', '') }}">
+                <button class="btn btn-outline-success" type="submit">Buscar</button>
+            </form>
+        </div>
+    </div>
+    
+    {% if query %}
+    <p class="text-center text-muted">Mostrando resultados para: <strong>"{{ query }}"</strong></p>
+    {% endif %}
+
+    <div class="table-responsive mt-4">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Código</th>
+                    <th>Cliente</th>
+                    <th>Dispositivo</th>
+                    <th>Estado</th>
+                    <th>Fecha de Ingreso</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for device in devices %}
+                <tr>
+                    <td>{{ device.tracking_code }}</td>
+                    <td>{{ device.customer_full_name }}</td>
+                    <td>{{ device.brand }} {{ device.model }}</td>
+                    <td>
+                        <span class="badge bg-{{ {'Ingresado':'secondary', 'Observacion':'warning', 'Reparacion':'info', 'Terminado':'success', 'Retirado':'dark'}[device.current_status] }}">
+                            {{ device.current_status }}
+                        </span>
+                    </td>
+                    <td>{{ device.reception_date.strftime('%d/%m/%Y') }}</td>
+                    <td>
+                        {% if session.get('role') == 'admin' or session.get('role') == 'administrativo' %}
+                        <a href="{{ url_for('view_device_details', device_id=device.id) }}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('view_device_details', device_id=device.id) }}" class="btn btn-sm btn-info">
+                            <i class="bi bi-search"></i> Ver
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No se encontraron equipos que coincidan con la búsqueda.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary"><i class="bi bi-arrow-left-circle-fill me-2"></i>Volver al Panel</a>
+    </div>
+</main>
+{% endblock %}

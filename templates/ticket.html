@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket de Recepción</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif; 
+            margin: 0;
+            padding: 0;
+            color: #000; 
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            font-size: 14px; 
+            line-height: 1.2;
+        }
+        .ticket-container {
+            width: 78mm;
+            padding: 5mm;
+            margin: 0 auto;
+            box-sizing: border-box;
+            font-weight: bold; 
+        }
+        .header {
+            text-align: center;
+            border-bottom: 1px dashed #000; 
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5em; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .header p {
+            font-size: 0.9em;
+            margin-top: 5px;
+            margin-bottom: 0;
+        }
+        .info-section p {
+            margin: 2px 0;
+            display: flex;
+            justify-content: space-between;
+            line-height: 1.3;
+        }
+        .info-section strong {
+            flex-basis: 40%;
+            text-align: left;
+        }
+        .info-section span {
+            flex-basis: 58%;
+            text-align: right;
+            word-break: break-word;
+        }
+        .tracking-code-section {
+            text-align: center;
+            margin: 10px 0 15px 0;
+            padding-top: 5px;
+            border-top: 1px dashed #000;
+        }
+        .tracking-code-section p {
+            margin: 0;
+            font-size: 0.9em;
+        }
+        .tracking-code-section h2 {
+            font-size: 1.5em;
+            margin: 5px 0 0 0;
+            word-break: break-all;
+        }
+        .footer {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.7em;
+            color: #000;
+            border-top: 1px dashed #000;
+            padding-top: 8px;
+            line-height: 1.1;
+        }
+        .footer p {
+            margin: 1px 0;
+            word-break: break-word;
+        }
+        .footer .url-text {
+            word-break: break-all;
+            font-size: 0.8em;
+        }
+        .footer .warranty-warning {
+            font-weight: bold;
+            margin-top: 8px;
+            margin-bottom: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="ticket-container">
+        <div class="header">
+            <h1>Ticket de Recepción</h1>
+            <p>{{ device.reception_date.strftime('%d/%m/%Y %H:%M') }}</p>
+        </div>
+        
+        <div class="info-section">
+            <p><strong>Cliente:</strong> <span>{{ device.customer_full_name }}</span></p>
+            <p><strong>Dispositivo:</strong> <span>{{ device.brand }} {{ device.model }}</span></p>
+            <p><strong>Número de Serie:</strong> <span>{{ device.serial_number or 'N/A' }}</span></p>
+            <p><strong>Problema:</strong> <span>{{ device.problem_description }}</span></p>
+            <p><strong>Fecha de Garantía:</strong> <span>{{ warranty_end_date }}</span></p>
+        </div>
+
+        <div class="tracking-code-section">
+            <p>CÓDIGO DE RASTREO</p>
+            <h2>{{ device.tracking_code }}</h2>
+        </div>
+
+      <div class="footer">
+    <p>Escanea este código QR para ver nuestros términos y condiciones</p>
+    
+    <img src="data:image/png;base64,{{ qr_terminos }}" alt="Código QR de Términos y Condiciones">
+
+    <p class="warranty-warning">Garantía:</p>
+    <p>La garantía finaliza 5 días después de que el dispositivo esté reparado y listo para retirar.</p>
+</div>
+    </div>
+    <script>
+        window.onload = function() {
+            window.print();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de Control{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 text-center my-4">
+        <h1 class="display-4 fw-bold text-primary">Bienvenido, {{ session.get('username') | title }}</h1>
+        <p class="lead">Tu rol actual es: <span class="badge bg-secondary">{{ session.get('role') | title }}</span></p>
+    </div>
+</div>
+
+<div class="d-flex flex-wrap justify-content-center gap-3">
+    {% if session.get('role') in ['admin', 'administrativo', 'vendedor'] %}
+    <div class="card my-2" style="width: 18rem;">
+        <div class="card-body text-center">
+            <i class="bi bi-box-seam display-4 text-success mb-3"></i>
+            <h5 class="card-title">Registrar Nuevo Equipo</h5>
+            <p class="card-text">Registra un nuevo dispositivo que ingrese al taller.</p>
+            <a href="{{ url_for('add_device') }}" class="btn btn-success">Ir a Registrar</a>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if session.get('role') == 'admin' %}
+    <div class="card my-2" style="width: 18rem;">
+        <div class="card-body text-center">
+            <i class="bi bi-person-gear display-4 text-primary mb-3"></i>
+            <h5 class="card-title">Gestión de Usuarios</h5>
+            <p class="card-text">Crea y elimina usuarios para todas las sucursales.</p>
+            <a href="{{ url_for('manage_users') }}" class="btn btn-primary">Gestionar Usuarios</a>
+        </div>
+    </div>
+    {% endif %}
+
+{% if session.get('role') in ['admin', 'administrativo', 'tecnico', 'vendedor'] %}
+<div class="card my-2" style="width: 18rem;">
+    <div class="card-body text-center">
+        <i class="bi bi-clipboard-data display-4 text-primary mb-3"></i>
+        <h5 class="card-title">Ver Equipos Registrados</h5>
+        <p class="card-text">Consulta la lista de todos los equipos y su estado actual.</p>
+        <a href="{{ url_for('list_devices') }}" class="btn btn-primary">Ver Dispositivos</a>
+    </div>
+</div>
+{% endif %}
+
+    {% if session.get('role') in ['admin', 'administrativo'] %}
+    <div class="card my-2" style="width: 18rem;">
+        <div class="card-body text-center">
+            <i class="bi bi-box-fill display-4 text-warning mb-3"></i>
+            <h5 class="card-title">Gestionar Stock</h5>
+            <p class="card-text">Gestiona los componentes y el inventario del taller.</p>
+            <a href="{{ url_for('manage_stock') }}" class="btn btn-warning">Gestionar Stock</a>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if session.get('role') in ['admin'] %}
+    <div class="card my-2" style="width: 18rem;">
+        <div class="card-body text-center">
+            <i class="bi bi-graph-up display-4 text-primary mb-3"></i>
+            <h5 class="card-title">Reporte de Ingresos</h5>
+            <p class="card-text">Analiza los ingresos generados por los servicios.</p>
+            <a href="{{ url_for('revenue_report') }}" class="btn btn-primary">Ver Reporte</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Detalles del Dispositivo{% endblock %}
+
+{% block content %}
+<div class="row my-4">
+    <div class="col-md-12">
+        <div class="card bg-light shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-center text-primary fw-bold mb-4">Detalles del Equipo</h2>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6 border-end">
+                        <p><strong>Código de Seguimiento:</strong> {{ device.tracking_code }}</p>
+                        <p><strong>Estado Actual:</strong> <span class="badge bg-{{ {'Ingresado':'secondary', 'Observacion':'warning', 'Reparacion':'info', 'Terminado':'success', 'Retirado':'dark'}[device.current_status] }}">{{ device.current_status }}</span></p>
+                        
+                        <p><strong>Cliente:</strong> {{ device.customer_full_name }}</p>
+                        <p><strong>DNI / CUIT:</strong> {{ device.customer_id_number }}</p>
+
+                        <p><strong>Teléfono:</strong> {{ device.customer_phone }}</p>
+                        <p><strong>Correo Electrónico:</strong> {{ device.customer_email or 'N/A' }}</p>
+                        <p><strong>Fecha de Ingreso:</strong> {{ device.reception_date.strftime('%d/%m/%Y %H:%M') }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Marca:</strong> {{ device.brand }}</p>
+                        <p><strong>Modelo:</strong> {{ device.model }}</p>
+                        <p><strong>Número de Serie:</strong> {{ device.serial_number or 'N/A' }}</p>
+                        <p><strong>Sucursal de Registro:</strong> {{ device.branch }}</p>
+                        <p><strong>Descripción del Problema:</strong></p>
+                        <p class="border rounded p-3 bg-white">{{ device.problem_description }}</p>
+                    </div>
+                </div>
+
+                {% if session.get('role') in ['admin', 'administrativo'] and device.current_status == 'Ingresado' %}
+                <hr>
+                <div class="mt-4 p-3 border rounded bg-white">
+                    <h4 class="mb-3 text-secondary">Asignar Técnico</h4>
+                    <form method="POST" action="{{ url_for('view_device_details', device_id=device.id) }}">
+                       <input type="hidden" name="action" value="assign_technician">
+                        <div class="mb-3">
+                            <label for="technician_id" class="form-label">Técnico a cargo</label>
+                            <select class="form-select" id="technician_id" name="technician_id" required>
+                                <option value="" disabled selected>Selecciona un técnico</option>
+                                {% for technician in technicians %}
+                                <option value="{{ technician.id }}">{{ technician.username | title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="observation_notes" class="form-label">Notas de observación</label>
+                            <textarea class="form-control" id="observation_notes" name="observation_notes" rows="3" placeholder="Descripción de la observación inicial para el técnico"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100">Asignar y Poner en Observación</button>
+                    </form>
+                </div>
+                {% endif %}
+                
+                {% if session.get('role') in ['admin', 'vendedor'] and device.current_status == 'Terminado' %}
+                <form method="POST" action="{{ url_for('view_device_details', device_id=device.id) }}" class="mb-3">
+                    <div class="mb-3">
+                        <label for="final_price" class="form-label">Precio Final ($)</label>
+                        <input type="number" step="0.01" class="form-control" name="final_price" placeholder="Precio final de venta" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="payment_method" class="form-label">Método de Pago</label>
+                        <select class="form-select" id="payment_method" name="payment_method" required>
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Mercado Pago">Mercado Pago</option>
+                        </select>
+                    </div>
+                    <button type="submit" name="action" value="mark_delivered" class="btn btn-success w-100">Marcar como Entregado</button>
+                </form>
+                {% endif %}
+
+                {% if session.get('role') == 'admin' and device.current_status == 'Retirado' %}
+                <form method="POST" action="{{ url_for('view_device_details', device_id=device.id) }}" class="mb-3">
+                    <input type="hidden" name="action" value="revert_status">
+                    <button type="submit" class="btn btn-danger btn-lg w-100">Revertir a Terminado</button>
+                </form>
+                {% endif %}
+
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-4">
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-lg"><i class="bi bi-arrow-left-circle-fill me-2"></i>Volver al Panel</a>
+                    <a href="{{ url_for('generate_ticket', tracking_code=device.tracking_code) }}" class="btn btn-info btn-lg" target="_blank"><i class="bi bi-receipt-cutoff me-2"></i>Generar Ticket</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+---
+
+<div class="row my-4">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h3 class="card-title fw-bold mb-0"><i class="bi bi-camera me-2"></i>Historial Fotográfico</h3>
+            </div>
+            <div class="card-body">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                    {% for photo_filename in all_photos %}
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="{{ url_for('uploaded_file', filename=photo_filename) }}" class="card-img-top img-fluid" alt="Foto del dispositivo" style="object-fit: cover; height: 200px;">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">
+                                        {% set initial_photos = device.initial_condition_photo_path.split(',') if device.initial_condition_photo_path else [] %}
+                                        {% if photo_filename in initial_photos %}
+                                            Ingreso
+                                        {% else %}
+                                            Reparación
+                                        {% endif %}
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="col-12">
+                            <p class="text-center text-muted">No hay fotos disponibles para este dispositivo.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+---
+
+<div class="row my-4">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="card-title fw-bold mb-0"><i class="bi bi-list-check me-2"></i>Historial de Reparaciones</h3>
+                {% if session.get('role') in ['admin', 'tecnico'] %}
+                <a href="{{ url_for('add_repair', device_id=device.id) }}" class="btn btn-light btn-sm">
+                    <i class="bi bi-plus-circle me-1"></i>Agregar Reparación
+                </a>
+                {% endif %}
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for repair in device.repairs %}
+                    <li class="list-group-item">
+                        <p class="mb-1"><strong>Técnico a cargo:</strong> {{ repair.device.technician.username | title if repair.device.technician else 'Sin asignar' }}</p>
+                        <p class="mb-1"><strong>Descripción:</strong> {{ repair.description }}</p>
+                        <p class="mb-1"><strong>Estado:</strong> {{ repair.status }}</p>
+                        <p class="mb-1"><strong>Fecha de inicio:</strong> {{ repair.start_date.strftime('%d/%m/%Y') }}</p>
+                        {% if repair.end_date %}
+                            <p class="mb-1"><strong>Fecha de término:</strong> {{ repair.end_date.strftime('%d/%m/%Y') }}</p>
+                        {% endif %}
+                        {% if repair.notes %}
+                            <p class="mb-1"><strong>Notas:</strong> {{ repair.notes }}</p>
+                        {% endif %}
+                        <p class="mb-1"><strong>Costo de componentes:</strong> <span class="text-success fw-bold">${{ "%.2f"|format(repair.cost) }}</span></p>
+                        <p class="mb-1"><strong>Precio al cliente:</strong> <span class="text-info fw-bold">${{ "%.2f"|format(repair.price_to_customer) }}</span></p>
+                        {% if repair.components_used %}
+                            <div class="mt-3">
+                                <strong class="text-muted">Componentes utilizados:</strong>
+                                <ul class="list-group list-group-flush mt-2">
+                                    {% for rc in repair.components_used %}
+                                        <li class="list-group-item p-1">{{ rc.quantity_used }} x {{ rc.component.name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+
+                        {% if session.get('role') in ['admin'] %}
+                            <div class="mt-3">
+                                <strong class="text-muted">Editar Costo:</strong>
+                                <form action="{{ url_for('edit_repair_cost', repair_id=repair.id) }}" method="post" class="d-flex mt-2">
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" step="0.01" class="form-control" name="new_cost" value="{{ "%.2f"|format(repair.cost) }}" required title="Editar costo de componentes" placeholder="Ingrese el nuevo costo">
+                                    </div>
+                                    <button class="btn btn-warning ms-2" type="submit">Guardar</button>
+                                </form>
+                            </div>
+                            <a href="{{ url_for('manage_components', repair_id=repair.id) }}" class="btn btn-sm btn-outline-primary mt-2">
+                                <i class="bi bi-gear-fill me-1"></i>Gestionar Componentes
+                            </a>
+                        {% endif %}
+                        {% if session.get('role') == 'admin' %}
+<div class="mt-3">
+    <strong class="text-muted">Editar Precio al Cliente:</strong>
+    <form action="{{ url_for('edit_repair_price', repair_id=repair.id) }}" method="post" class="d-flex mt-2">
+        <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input type="number" step="0.01" class="form-control" name="new_price_to_customer" value="{{ "%.2f"|format(repair.price_to_customer) }}" required title="Editar precio al cliente" placeholder="Ingrese el nuevo precio">
+        </div>
+        <button class="btn btn-danger ms-2" type="submit">Guardar</button>
+    </form>
+</div>
+{% endif %}
+                    </li>
+                {% else %}
+                    <li class="list-group-item text-center text-muted">Aún no hay reparaciones registradas.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% if session.get('role') == 'admin' %}
+    <hr>
+    <div class="mt-4 p-3 border rounded bg-white">
+        <h4 class="mb-3 text-danger">Eliminar Dispositivo</h4>
+        <p class="text-danger">Advertencia: Esta acción es irreversible y eliminará permanentemente el dispositivo y su historial de reparaciones.</p>
+        <form action="{{ url_for('delete_device', device_id=device.id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este dispositivo? Esta acción no se puede deshacer.');">
+            <button type="submit" class="btn btn-danger w-100">Eliminar Dispositivo</button>
+        </form>
+    </div>
+{% endif %}
+
+{% endblock %}

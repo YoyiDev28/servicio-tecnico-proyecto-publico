@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Servicio Tecnico{% endblock %}
+
+{% block content %}
+
+<section class="jumbotron text-center bg-light py-5">
+    <div class="container">
+        <h1 class="display-4 fw-bold text-primary">Servicio Tecnico</h1>
+        <p class="lead text-muted">Soluciones expertas en reparación y venta de electrónica.</p>
+        <p>
+            <a href="{{ url_for('track_device') }}" class="btn btn-primary my-2 btn-lg"><i class="bi bi-search me-2"></i>Seguir mi Equipo</a>
+        </p>
+    </div>
+</section>
+
+<section class="container my-5" id="servicios">
+    <h2 class="text-center mb-4 text-secondary fw-bold">Nuestros Servicios</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ url_for('static', filename='marketing-images/repair_phone.png') }}" class="card-img-top" alt="Reparación de Celulares">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-phone-fill me-2"></i>Reparación de Celulares</h5>
+                    <p class="card-text">Soluciones rápidas y eficientes para pantallas rotas, baterías, software y más.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ url_for('static', filename='marketing-images/repair_laptop.png') }}" class="card-img-top" alt="Reparación de Laptops y PCs">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-laptop-fill me-2"></i>Laptops & PCs</h5>
+                    <p class="card-text">Diagnóstico y reparación de hardware, software, optimización y limpieza.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ url_for('static', filename='marketing-images/other_repairs.png') }}" class="card-img-top" alt="Otras Reparaciones">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-gear-fill me-2"></i>Otras Reparaciones</h5>
+                    <p class="card-text">Consultanos por otros dispositivos electrónicos. ¡Estamos para ayudarte!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container my-5" id="productos">
+    <h2 class="text-center mb-4 text-success fw-bold">Productos en Venta</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ url_for('static', filename='marketing-images/product_accessories.jpg') }}" class="card-img-top" alt="Accesorios para Celulares">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-headphones me-2"></i>Accesorios para Celulares</h5>
+                    <p class="card-text">Cargadores, auriculares, fundas, protectores y mucho más.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ url_for('static', filename='marketing-images/product_peripherals.jpg') }}" class="card-img-top" alt="Periféricos para PC">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-keyboard-fill me-2"></i>Periféricos de PC</h5>
+                    <p class="card-text">Teclados, mouses, monitores y otros componentes.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ url_for('static', filename='marketing-images/product_used_devices.jpg') }}" class="card-img-top" alt="Equipos Restaurados">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-recycle me-2"></i>Equipos Restaurados</h5>
+                    <p class="card-text">Dispositivos electrónicos usados en excelente estado y con garantía.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Gestionar Componentes{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="text-center text-primary fw-bold mb-4">Gestionar Componentes para la Reparación #{{ repair.id }}</h2>
+    <p class="text-center lead"><strong>Descripción de la Reparación:</strong> {{ repair.description }}</p>
+
+    <hr class="my-5">
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h3 class="card-title mb-0 fw-bold">Agregar Componente Existente</h3>
+                </div>
+                <div class="card-body">
+                    {% if available_components %}
+                        <form method="POST" action="{{ url_for('manage_components', repair_id=repair.id) }}">
+                            <div class="mb-3">
+                                <label for="component_id" class="form-label">Seleccionar Componente:</label>
+                                <select id="component_id" name="component_id" class="form-select" required>
+                                    {% for component in available_components %}
+                                        <option value="{{ component.id }}">{{ component.name }} ({{ component.stock_quantity }} en stock)</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="quantity_used" class="form-label">Cantidad a usar:</label>
+                                <input type="number" id="quantity_used" name="quantity_used" class="form-control" min="1" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Agregar Componente</button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <p class="mb-0">No hay componentes disponibles en stock para agregar. Por favor, agregue nuevos componentes en el <a href="{{ url_for('manage_stock') }}">panel de gestión de stock</a>.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="card-title mb-0 fw-bold">Componentes ya agregados a esta reparación</h3>
+                </div>
+                <div class="card-body">
+                    {% if repair.components_used %}
+                        <ul class="list-group list-group-flush">
+                            {% for rc in repair.components_used %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>{{ rc.component.name }}</strong>
+                                    <span class="badge bg-primary rounded-pill">Cantidad usada: {{ rc.quantity_used }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center text-muted">Aún no se han agregado componentes a esta reparación.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{{ url_for('view_device_details', device_id=repair.device.id) }}" class="btn btn-secondary btn-lg"><i class="bi bi-arrow-left-circle-fill me-2"></i>Volver a los detalles del dispositivo</a>
+    </div>
+</div>
+{% endblock %}
